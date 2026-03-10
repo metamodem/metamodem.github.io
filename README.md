@@ -379,10 +379,10 @@
 
       ── ИЗОБРАЖЕНИЕ ──────────────────────────────────────
       <div class="work-item" data-type="image"
-           data-src="works/image-filename.jpg"
-           data-title="Название работы"
-           data-desc="Описание, год, инструмент">
-        <img class="work-media" src="works/image-filename.jpg" alt="..." />
+           data-src="works/bhudda.jpg"
+           data-title="Сход снега"
+           data-desc="Ретушь, 2024, DALL-E">
+        <img class="work-media" src="works/bhudda.jpg" alt="..." />
         <div class="work-type-badge">Image</div>
         <div class="work-overlay">
           <div class="work-caption">
@@ -394,10 +394,10 @@
 
       ── ВИДЕО (локальный файл) ────────────────────────────
       <div class="work-item" data-type="video"
-           data-src="works/video.mp4"
+           data-src="vorkuta_2.mp4"
            data-title="Название" data-desc="...">
         <div class="work-video-wrap">
-          <video class="work-media" src="works/video.mp4" muted autoplay loop playsinline></video>
+          <video class="work-media" src="works/cats_2.mp4" muted autoplay loop playsinline></video>
         </div>
         <div class="work-type-badge">Video</div>
         <div class="work-overlay">

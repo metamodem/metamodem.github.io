@@ -444,17 +444,17 @@
     <!-- ПРИМЕРЫ-ЗАГЛУШКИ (замените реальными работами) -->
 
     <div class="work-item" data-type="image"
-         data-src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800"
-         data-title="Liminal Spaces #01"
-         data-desc="Generative image series · 2024 · Midjourney + Photoshop">
+         data-src="works/bhudda.jpg"
+         data-title="Сход снега"
+         data-desc="Abstracts · 2024 · DALL-E + Photoshop">
       <img class="work-media"
-           src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800"
-           alt="Liminal Spaces #01" loading="lazy" />
+           src="works/bhudda.jpg"
+           alt="Сход снега" loading="lazy" />
       <div class="work-type-badge">Image</div>
       <div class="work-overlay">
         <div class="work-caption">
-          <div class="work-title">Liminal Spaces #01</div>
-          <div class="work-desc">Generative series · 2024 · Midjourney</div>
+          <div class="work-title">Сход снега</div>
+          <div class="work-desc">Abstracts · 2024 · DALL-E + Photoshop</div>
         </div>
       </div>
     </div>

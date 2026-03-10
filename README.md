@@ -337,7 +337,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#hero" class="nav-logo">A. I.</a>
+  <a href="#hero" class="nav-logo">A. Ekimov</a>
   <div class="nav-links">
     <a href="#works">Works</a>
     <a href="#about">About</a>
@@ -493,6 +493,21 @@
         </div>
       </div>
     </div>
+
+    <div class="work-item" data-type="video"
+           data-src="vorkuta_2.mp4"
+           data-title="Название" data-desc="...">
+        <div class="work-video-wrap">
+          <video class="work-media" src="works/cats_2.mp4" muted autoplay loop playsinline></video>
+        </div>
+        <div class="work-type-badge">Video</div>
+        <div class="work-overlay">
+          <div class="work-caption">
+            <div class="work-title">Название</div>
+            <div class="work-desc">Описание · 2024 · Runway</div>
+          </div>
+        </div>
+      </div>
 
     <div class="work-item" data-type="gif"
          data-src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800"

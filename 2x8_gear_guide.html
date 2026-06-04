@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>2×8 Gear Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e0e;
+  --surface: #161616;
+  --surface2: #1f1f1f;
+  --border: #2a2a2a;
+  --border2: #3a3a3a;
+  --text: #e8e4dc;
+  --muted: #6b6b6b;
+  --muted2: #4a4a4a;
+  --accent-orange: #e05c1a;
+  --accent-blue: #1a7ae0;
+  --accent-green: #1aaa5c;
+  --accent-red: #d03030;
+  --accent-yellow: #d4a020;
+  --big: var(--accent-orange);
+  --small: var(--accent-blue);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+}
+
+/* NAV */
+nav {
+  display: flex;
+  gap: 2px;
+  padding: 10px 12px 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .04em;
+  padding: 8px 4px 10px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color .2s, border-color .2s;
+  text-transform: uppercase;
+}
+.tab.active { color: var(--text); border-bottom-color: var(--accent-orange); }
+
+/* PAGES */
+.page { display: none; padding: 16px 12px 80px; }
+.page.active { display: block; }
+
+/* HEADINGS */
+.display {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  letter-spacing: .04em;
+  line-height: 1;
+  color: var(--text);
+}
+.display span { color: var(--accent-orange); }
+.label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* SECTION */
+section { margin-bottom: 28px; }
+.section-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ===== PAGE 1: SELECTOR ===== */
+.star-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.star-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: all .15s;
+  text-align: left;
+  color: var(--text);
+  font-family: inherit;
+}
+.star-btn:active { transform: scale(.97); }
+.star-btn.sel-big { background: #1c0d04; border-color: var(--accent-orange); }
+.star-btn.sel-small { background: #04101c; border-color: var(--accent-blue); }
+.star-btn .num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  line-height: 1;
+  display: block;
+}
+.star-btn.sel-big .num { color: var(--accent-orange); }
+.star-btn.sel-small .num { color: var(--accent-blue); }
+.star-btn .desc { font-size: 11px; color: var(--muted); margin-top: 2px; display: block; font-family: 'IBM Plex Mono', monospace; }
+
+/* rear grid */
+.rear-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.rear-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 2px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+.rear-btn:active { transform: scale(.93); }
+.rear-btn .teeth { font-size: 9px; color: var(--muted2); display: block; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+.rear-btn.sel-big { background: #1c0d04; border-color: var(--accent-orange); color: var(--accent-orange); }
+.rear-btn.sel-small { background: #04101c; border-color: var(--accent-blue); color: var(--accent-blue); }
+.rear-btn.bad { background: #1a0808; border-color: #5a1010; color: #5a1010; }
+.rear-btn.warn { background: #1a1208; border-color: #5a4010; color: #8a6010; }
+
+/* status card */
+.status-card {
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: background .2s, border-color .2s;
+}
+.status-card.ok { background: #061209; border-color: #1a4a28; }
+.status-card.warn { background: #131008; border-color: #4a3a10; }
+.status-card.bad { background: #120808; border-color: #4a1818; }
+
+.status-icon { font-size: 24px; margin-bottom: 6px; display: block; }
+.status-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.status-ok .status-title { color: var(--accent-green); }
+.status-warn .status-title { color: var(--accent-yellow); }
+.status-bad .status-title { color: var(--accent-red); }
+.status-body { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+/* ratio bar */
+.ratio-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.ratio-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 10px 8px;
+}
+.ratio-card .rv {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--text);
+}
+.ratio-card .rl { font-size: 10px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+
+/* chain SVG container */
+.chain-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+/* ===== PAGE 2: ZONES TABLE ===== */
+.zone-block {
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.zone-header {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.zone-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.zone-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; }
+.zone-sub { font-size: 11px; color: var(--muted); margin-left: auto; font-family: 'IBM Plex Mono', monospace; }
+
+.gear-row {
+  display: flex;
+  align-items: center;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.gear-row:last-child { border-bottom: none; }
+.gear-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.gear-bar-wrap { flex: 1; }
+.gear-bar-bg {
+  height: 5px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+.gear-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+.gear-use { font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+.gear-speed { font-size: 11px; color: var(--muted2); margin-left: auto; font-family: 'IBM Plex Mono', monospace; text-align: right; min-width: 70px; }
+
+/* ===== PAGE 3: RULES ===== */
+.rule-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.rule-icon {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.rule-icon.orange { background: #1c0d04; }
+.rule-icon.blue { background: #04101c; }
+.rule-icon.red { background: #120808; }
+.rule-icon.green { background: #061209; }
+.rule-icon.yellow { background: #131008; }
+.rule-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+.rule-body { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.rule-body strong { color: var(--text); }
+
+/* scenario cards */
+.scenario {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.scenario:active { border-color: var(--border2); }
+.scenario-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+}
+.scenario.open .scenario-head { margin-bottom: 10px; }
+.scenario-emoji { font-size: 20px; }
+.scenario-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; }
+.scenario-arrow { margin-left: auto; color: var(--muted); font-size: 12px; transition: transform .2s; }
+.scenario.open .scenario-arrow { transform: rotate(90deg); }
+.scenario-body { display: none; font-size: 12px; color: var(--muted); line-height: 1.65; }
+.scenario.open .scenario-body { display: block; }
+.scenario-body strong { color: var(--text); }
+
+/* ===== PAGE 4: PROBLEMS ===== */
+.problem-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.problem-head {
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.problem-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; }
+.problem-arrow { margin-left: auto; color: var(--muted); font-size: 12px; transition: transform .2s; }
+.problem-card.open .problem-arrow { transform: rotate(90deg); }
+.problem-body {
+  display: none;
+  padding: 0 14px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.problem-card.open .problem-body { display: block; }
+.problem-body strong { color: var(--text); }
+.problem-body ul { padding-left: 16px; margin-top: 6px; }
+.problem-body li { margin-bottom: 4px; }
+.cause-tag {
+  display: inline-block;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--muted);
+  margin-right: 4px;
+  margin-bottom: 6px;
+}
+
+/* header hero */
+.hero {
+  padding: 20px 0 16px;
+  margin-bottom: 4px;
+}
+.hero-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  margin-bottom: 6px;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <button class="tab active" onclick="goto(0)">Выбор</button>
+  <button class="tab" onclick="goto(1)">Зоны</button>
+  <button class="tab" onclick="goto(2)">Правила</button>
+  <button class="tab" onclick="goto(3)">Проблемы</button>
+</nav>
+
+<!-- PAGE 0: SELECTOR -->
+<div class="page active" id="page0">
+  <div class="hero">
+    <div class="hero-sub">Corratec Holtek Vertu · 2×8</div>
+    <div class="display">ВЫБЕРИ<br><span>ПЕРЕДАЧУ</span></div>
+  </div>
+
+  <section>
+    <div class="section-title">Передняя звезда</div>
+    <div class="star-row">
+      <button class="star-btn sel-big" id="f2" onclick="setFront(2)">
+        <span class="num">2</span>
+        <span class="desc">БОЛЬШАЯ · ~42T<br>Асфальт, скорость</span>
+      </button>
+      <button class="star-btn" id="f1" onclick="setFront(1)">
+        <span class="num">1</span>
+        <span class="desc">МАЛАЯ · ~26T<br>Подъёмы, грунт</span>
+      </button>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">Задняя кассета — выбери звезду</div>
+    <div class="rear-grid" id="rear-grid"></div>
+  </section>
+
+  <div class="ratio-row" id="ratio-row">
+    <div class="ratio-card">
+      <div class="rv" id="rv-ratio">—</div>
+      <div class="rl">передат. число</div>
+    </div>
+    <div class="ratio-card">
+      <div class="rv" id="rv-front">—</div>
+      <div class="rl">передняя T</div>
+    </div>
+    <div class="ratio-card">
+      <div class="rv" id="rv-rear">—</div>
+      <div class="rl">задняя T</div>
+    </div>
+  </div>
+
+  <div class="chain-wrap">
+    <svg id="chain-svg" width="100%" viewBox="0 0 340 90">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <!-- front big -->
+      <circle id="svg-fbig" cx="65" cy="45" r="32" fill="none" stroke="#e05c1a" stroke-width="2.5" opacity="1"/>
+      <circle id="svg-fsmall" cx="65" cy="45" r="20" fill="none" stroke="#1a7ae0" stroke-width="2" stroke-dasharray="4 3" opacity="0.25"/>
+      <text x="65" y="45" text-anchor="middle" dominant-baseline="central" font-family="Bebas Neue,sans-serif" font-size="14" fill="#e05c1a" id="svg-flabel">Б</text>
+      <!-- rear -->
+      <g id="svg-rear-cogs"></g>
+      <!-- chain -->
+      <line id="svg-chain-top" stroke="#888" stroke-width="2" stroke-dasharray="5 3" stroke-linecap="round"/>
+      <line id="svg-chain-bot" stroke="#888" stroke-width="2" stroke-dasharray="5 3" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="status-card" id="status-card">
+    <span class="status-icon" id="status-icon">⚙️</span>
+    <div class="status-title" id="status-title">Выберите передачи</div>
+    <div class="status-body" id="status-body">Нажмите кнопки выше</div>
+  </div>
+</div>
+
+<!-- PAGE 1: ZONES -->
+<div class="page" id="page1">
+  <div class="hero">
+    <div class="hero-sub">Правила зон</div>
+    <div class="display">ЗОНЫ<br><span>КАССЕТЫ</span></div>
+  </div>
+
+  <section>
+    <div class="section-title">Большая передняя (2) — асфальт</div>
+    <div class="zone-block">
+      <div class="zone-header">
+        <div class="zone-dot" style="background:#e05c1a"></div>
+        <div class="zone-title" style="color:#e05c1a">Большая звезда</div>
+        <div class="zone-sub">задние 1–5</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#e05c1a">1</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:100%;background:#e05c1a"></div></div>
+          <div class="gear-use">11T · Спуск, макс. скорость</div>
+        </div>
+        <div class="gear-speed">≈ 3.82×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#e05c1a">2</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:86%;background:#e05c1a"></div></div>
+          <div class="gear-use">13T · Быстрый асфальт</div>
+        </div>
+        <div class="gear-speed">≈ 3.23×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#e05c1a">3</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:73%;background:#e05c1a"></div></div>
+          <div class="gear-use">15T · Крейсерская езда</div>
+        </div>
+        <div class="gear-speed">≈ 2.80×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#e05c1a">4</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:58%;background:#e05c1a"></div></div>
+          <div class="gear-use">18T · Лёгкий ветер, уклон</div>
+        </div>
+        <div class="gear-speed">≈ 2.33×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#d4a020">5</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:46%;background:#d4a020"></div></div>
+          <div class="gear-use">21T · Умеренный подъём ⚠️</div>
+        </div>
+        <div class="gear-speed">≈ 2.00×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#5a1010">6</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:34%;background:#5a1010"></div></div>
+          <div class="gear-use">24T · Нежелательно ⛔</div>
+        </div>
+        <div class="gear-speed">≈ 1.75×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#3a0808">7</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:22%;background:#3a0808"></div></div>
+          <div class="gear-use">28T · Сильный перекос ⛔⛔</div>
+        </div>
+        <div class="gear-speed">≈ 1.50×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#3a0808">8</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:12%;background:#3a0808"></div></div>
+          <div class="gear-use">32T · ЗАПРЕЩЕНО ⛔⛔⛔</div>
+        </div>
+        <div class="gear-speed">≈ 1.31×</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">Малая передняя (1) — подъёмы</div>
+    <div class="zone-block">
+      <div class="zone-header">
+        <div class="zone-dot" style="background:#1a7ae0"></div>
+        <div class="zone-title" style="color:#1a7ae0">Малая звезда</div>
+        <div class="zone-sub">задние 4–8</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#3a0808">1</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:100%;background:#3a0808"></div></div>
+          <div class="gear-use">11T · ЗАПРЕЩЕНО ⛔⛔⛔</div>
+        </div>
+        <div class="gear-speed">≈ 2.36×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#3a0808">2</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:86%;background:#3a0808"></div></div>
+          <div class="gear-use">13T · Сильный перекос ⛔⛔</div>
+        </div>
+        <div class="gear-speed">≈ 2.00×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#5a4010">3</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:73%;background:#5a4010"></div></div>
+          <div class="gear-use">15T · Нежелательно ⚠️</div>
+        </div>
+        <div class="gear-speed">≈ 1.73×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#1a7ae0">4</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:58%;background:#1a7ae0"></div></div>
+          <div class="gear-use">18T · Переходная передача</div>
+        </div>
+        <div class="gear-speed">≈ 1.44×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#1a7ae0">5</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:46%;background:#1a7ae0"></div></div>
+          <div class="gear-use">21T · Пологий подъём</div>
+        </div>
+        <div class="gear-speed">≈ 1.24×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#1a7ae0">6</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:34%;background:#1a7ae0"></div></div>
+          <div class="gear-use">24T · Средний подъём</div>
+        </div>
+        <div class="gear-speed">≈ 1.08×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#1a7ae0">7</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:22%;background:#1a7ae0"></div></div>
+          <div class="gear-use">28T · Крутой подъём</div>
+        </div>
+        <div class="gear-speed">≈ 0.93×</div>
+      </div>
+      <div class="gear-row">
+        <div class="gear-num" style="color:#1a7ae0">8</div>
+        <div class="gear-bar-wrap">
+          <div class="gear-bar-bg"><div class="gear-bar-fill" style="width:12%;background:#1a7ae0"></div></div>
+          <div class="gear-use">32T · Очень крутой подъём</div>
+        </div>
+        <div class="gear-speed">≈ 0.81×</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule-card">
+    <div class="rule-icon red"><span>⛔</span></div>
+    <div>
+      <div class="rule-title" style="color:#d03030">Главное правило перекоса</div>
+      <div class="rule-body">
+        <strong>Большая + большие задние (7–8)</strong> = цепь идёт с максимальным углом вправо.<br>
+        <strong>Малая + малые задние (1–2)</strong> = цепь идёт с максимальным углом влево.<br>
+        Обе комбинации — ускоренный износ и риск слетания.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: RULES -->
+<div class="page" id="page2">
+  <div class="hero">
+    <div class="hero-sub">Как переключать</div>
+    <div class="display">ТЕХНИКА<br><span>ЕЗДЫ</span></div>
+  </div>
+
+  <section>
+    <div class="section-title">Ключевые правила</div>
+    <div class="rule-card">
+      <div class="rule-icon orange">🔑</div>
+      <div>
+        <div class="rule-title">Всегда крути педали при переключении</div>
+        <div class="rule-body">Без вращения цепь не перейдёт на другую звезду. Крути, но <strong>слегка сними нагрузку</strong> — чуть ослабь давление на педали за секунду до щелчка.</div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon blue">📐</div>
+      <div>
+        <div class="rule-title">Правая манетка = задние (быстро)</div>
+        <div class="rule-body">Правая рукоять управляет 8 задними звёздами. Переключается быстро и легко, можно прыгать по 2–3 шага. <strong>Используй постоянно</strong> для адаптации к рельефу.</div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon yellow">⚡</div>
+      <div>
+        <div class="rule-title">Левая манетка = передние (редко)</div>
+        <div class="rule-body">Левая переключает между 2 передними звёздами. Делай <strong>заранее, не под нагрузкой</strong>. Используй только для смены рельефа — асфальт ↔ подъём.</div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon green">🔄</div>
+      <div>
+        <div class="rule-title">После смены передней — корректируй заднюю</div>
+        <div class="rule-body">Переключился на большую переднюю → сразу переключи заднюю вниз на 2–3 ступени (меньшая, тяжелее). Нагрузка выровняется автоматически.</div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon red">⛔</div>
+      <div>
+        <div class="rule-title">Готовься к горке заранее</div>
+        <div class="rule-body">Переключай на малую переднюю <strong>до подъёма</strong>, пока педали крутятся легко. Под нагрузкой на горке передний переключатель может не сработать.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">Сценарии</div>
+    <div class="scenario" onclick="toggleScenario(this)">
+      <div class="scenario-head">
+        <span class="scenario-emoji">🚀</span>
+        <span class="scenario-title">Старт с места</span>
+        <span class="scenario-arrow">▶</span>
+      </div>
+      <div class="scenario-body">
+        <strong>Рекомендуемые передачи:</strong> Малая передняя (1) + задняя 5–6.<br><br>
+        Набрал скорость и езда стала ровной → переключись на <strong>большую переднюю (2)</strong>, одновременно переключи заднюю на 3–4. Нагрузка станет похожей.
+      </div>
+    </div>
+    <div class="scenario" onclick="toggleScenario(this)">
+      <div class="scenario-head">
+        <span class="scenario-emoji">🛣️</span>
+        <span class="scenario-title">Ровный асфальт</span>
+        <span class="scenario-arrow">▶</span>
+      </div>
+      <div class="scenario-body">
+        <strong>Основная зона:</strong> Большая передняя (2) + задние 2–4.<br><br>
+        Адаптируй заднюю звезду под ощущения: немного тяжело → задняя вверх (4–5), немного легко → задняя вниз (1–2). Передняя не трогается.
+      </div>
+    </div>
+    <div class="scenario" onclick="toggleScenario(this)">
+      <div class="scenario-head">
+        <span class="scenario-emoji">⬆️</span>
+        <span class="scenario-title">Подъём впереди</span>
+        <span class="scenario-arrow">▶</span>
+      </div>
+      <div class="scenario-body">
+        <strong>До начала горки:</strong> Переключи на малую переднюю (1) + задняя 5.<br><br>
+        На самом подъёме: только правой манеткой подбирай комфортную заднюю (5–8). <strong>Никогда не трогай левую манетку на подъёме под нагрузкой</strong> — передний переключатель не сработает или цепь слетит.
+      </div>
+    </div>
+    <div class="scenario" onclick="toggleScenario(this)">
+      <div class="scenario-head">
+        <span class="scenario-emoji">⬇️</span>
+        <span class="scenario-title">Спуск</span>
+        <span class="scenario-arrow">▶</span>
+      </div>
+      <div class="scenario-body">
+        <strong>Большая передняя (2) + задняя 1–2.</strong><br><br>
+        Максимальное передаточное число, педали не надо крутить быстро. Цепь в оптимальном положении.
+      </div>
+    </div>
+    <div class="scenario" onclick="toggleScenario(this)">
+      <div class="scenario-head">
+        <span class="scenario-emoji">🚦</span>
+        <span class="scenario-title">Приближаешься к остановке</span>
+        <span class="scenario-arrow">▶</span>
+      </div>
+      <div class="scenario-body">
+        <strong>До полной остановки</strong> переключись обратно на: малая передняя (1) + задняя 5–6.<br><br>
+        Это «стартовая» позиция. Если забыл — старт будет очень тяжёлым и возможно переключение под нагрузкой после троганья.
+      </div>
+    </div>
+    <div class="scenario" onclick="toggleScenario(this)">
+      <div class="scenario-head">
+        <span class="scenario-emoji">💨</span>
+        <span class="scenario-title">Встречный ветер</span>
+        <span class="scenario-arrow">▶</span>
+      </div>
+      <div class="scenario-body">
+        Лёгкий ветер: <strong>большая передняя + задняя 4–5</strong>.<br>
+        Сильный ветер: <strong>малая передняя + задняя 5–6</strong> — меньше нагрузка, стабильный каденс.<br><br>
+        Главное — поддерживать ритм педалирования ~70–90 об/мин, а не тяжёлую звезду.
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">Золотое правило каденса</div>
+    <div class="rule-card">
+      <div class="rule-icon green">🎯</div>
+      <div>
+        <div class="rule-title">70–90 оборотов педалей в минуту</div>
+        <div class="rule-body">
+          Это оптимальный каденс для большинства райдеров. Если крутишь медленнее с усилием — <strong>переключись на более лёгкую</strong> (задняя вверх). Если педали «болтаются» — <strong>на более тяжёлую</strong> (задняя вниз).
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- PAGE 3: PROBLEMS -->
+<div class="page" id="page3">
+  <div class="hero">
+    <div class="hero-sub">Диагностика</div>
+    <div class="display">ЧАСТЫЕ<br><span>ПРОБЛЕМЫ</span></div>
+  </div>
+
+  <section>
+    <div class="section-title">Нажми на проблему</div>
+
+    <div class="problem-card" onclick="toggleProblem(this)">
+      <div class="problem-head">
+        <span style="font-size:18px">🔕</span>
+        <span class="problem-title">Не переключается с малой на большую переднюю</span>
+        <span class="problem-arrow">▶</span>
+      </div>
+      <div class="problem-body">
+        <span class="cause-tag">Самая частая проблема</span><br>
+        <strong>Причины и решения:</strong>
+        <ul>
+          <li><strong>Слишком большая нагрузка.</strong> За 1–2 сек до щелчка резко облегчи давление на педали — почти вхолостую.</li>
+          <li><strong>Тросик вытянулся</strong> (первые 100–200 км — норма). Подтяни баррель-адджустер на переключателе или манетке на пол-оборота против часовой стрелки.</li>
+          <li><strong>Задняя звезда слишком большая (6–8).</strong> Перед переключением передней — переключи заднюю на 3–4, нагрузка упадёт.</li>
+          <li><strong>Рамка переключателя высоко.</strong> Должна быть 1–3 мм над большой звездой — вопрос к мастеру при первом ТО.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="problem-card" onclick="toggleProblem(this)">
+      <div class="problem-head">
+        <span style="font-size:18px">🔊</span>
+        <span class="problem-title">Цепь шумит, дребезжит при езде</span>
+        <span class="problem-arrow">▶</span>
+      </div>
+      <div class="problem-body">
+        <span class="cause-tag">Перекос цепи</span>
+        <span class="cause-tag">Настройка</span><br>
+        <strong>Причины:</strong>
+        <ul>
+          <li>Ты на запрещённой комбинации (большая+большие или малая+малые). Проверь по вкладке «Зоны».</li>
+          <li>Передний переключатель задевает цепь. Небольшая подстройка боковых винтов (H/L) переключателя.</li>
+          <li>Цепь требует смазки — особенно в первые недели и после дождя.</li>
+          <li>Тросик заднего переключателя нужно чуть поджать — цепь «гуляет» между звёздами.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="problem-card" onclick="toggleProblem(this)">
+      <div class="problem-head">
+        <span style="font-size:18px">⛓️</span>
+        <span class="problem-title">Цепь слетела</span>
+        <span class="problem-arrow">▶</span>
+      </div>
+      <div class="problem-body">
+        <span class="cause-tag">Экстренная ситуация</span><br>
+        <strong>Что произошло:</strong> скорее всего, был сильный перекос или переключение под нагрузкой.<br><br>
+        <strong>Как надеть обратно:</strong> приподними заднее колесо (или переверни вел), набрось цепь рукой на малую переднюю звезду и на любую заднюю, медленно крути педали — цепь сама встанет на место.<br><br>
+        <strong>Профилактика:</strong> не используй запрещённые зоны, переключай только при вращении педалей.
+      </div>
+    </div>
+
+    <div class="problem-card" onclick="toggleProblem(this)">
+      <div class="problem-head">
+        <span style="font-size:18px">🦴</span>
+        <span class="problem-title">Передачи переключаются с задержкой или с хрустом</span>
+        <span class="problem-arrow">▶</span>
+      </div>
+      <div class="problem-body">
+        <span class="cause-tag">Обслуживание</span><br>
+        <ul>
+          <li><strong>Тросик требует натяжки.</strong> Баррель-адджустер против часовой — на пол-оборота, тестируй, повтори.</li>
+          <li><strong>Цепь нужно смазать.</strong> Капни масло на каждый звен, прокрути, протри излишки тряпкой.</li>
+          <li><strong>После 200–300 км</strong> рекомендуется первое ТО у мастера — настройка переключателей после обкатки.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="problem-card" onclick="toggleProblem(this)">
+      <div class="problem-head">
+        <span style="font-size:18px">🔩</span>
+        <span class="problem-title">Повредил ли я трансмиссию на 20 км?</span>
+        <span class="problem-arrow">▶</span>
+      </div>
+      <div class="problem-body">
+        <span class="cause-tag">Только что купил</span><br>
+        <strong>Скорее всего — нет.</strong> 20 км — это обкатка. Трансмиссия рассчитана на тысячи километров.<br><br>
+        Небольшие перекосы и неловкие переключения в первые дни не наносят критического вреда. Цепь, звёзды и переключатели начинают реально изнашиваться при <strong>систематическом</strong> использовании запрещённых комбинаций сотнями километров.<br><br>
+        <strong>Что делать сейчас:</strong> смажь цепь, изучи правила зон, и запишись на первое ТО через 200–300 км.
+      </div>
+    </div>
+
+    <div class="problem-card" onclick="toggleProblem(this)">
+      <div class="problem-head">
+        <span style="font-size:18px">🛢️</span>
+        <span class="problem-title">Как и когда смазывать цепь</span>
+        <span class="problem-arrow">▶</span>
+      </div>
+      <div class="problem-body">
+        <ul>
+          <li><strong>Когда:</strong> каждые 150–300 км, или после дождя, или когда цепь начала скрипеть.</li>
+          <li><strong>Чем:</strong> специальное масло для велоцепей (wet lube для дождя, dry/wax для сухой погоды). Не WD-40 — это растворитель, не смазка.</li>
+          <li><strong>Как:</strong> нанеси каплю на каждое звено, прокрути педали 20–30 оборотов, подожди 2–3 минуты, вытри излишки сухой тряпкой.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px">
+    <div class="label" style="margin-bottom:6px">Первое ТО</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.65">
+      После <strong style="color:var(--text)">200–300 км</strong> отдай велосипед на сервис. Механик подтянет тросики, отрегулирует переключатели после обкатки. Это стандартная процедура для любого нового велосипеда — заложи её в план.
+    </div>
+  </div>
+</div>
+
+<script>
+const tabs = document.querySelectorAll('.tab');
+const pages = document.querySelectorAll('.page');
+function goto(i) {
+  tabs.forEach((t,j)=>t.classList.toggle('active',i===j));
+  pages.forEach((p,j)=>p.classList.toggle('active',i===j));
+}
+
+// --- SELECTOR LOGIC ---
+const rearT = [11,13,15,18,21,24,28,32];
+const frontT = {2:42, 1:26};
+let front = 2, rear = 3;
+
+function buildRearGrid() {
+  const g = document.getElementById('rear-grid');
+  g.innerHTML = '';
+  rearT.forEach((t,i)=>{
+    const r = i+1;
+    const bad = (front===2&&r>=7)||(front===1&&r<=2);
+    const warn = (front===2&&r>=6)||(front===1&&r<=3);
+    const b = document.createElement('button');
+    b.className = 'rear-btn' + (bad?' bad':warn?' warn':'');
+    b.setAttribute('data-r', r);
+    b.innerHTML = r + '<span class="teeth">'+t+'T</span>';
+    b.onclick = ()=>{ rear=r; render(); };
+    if(r===rear) {
+      b.className = 'rear-btn' + (bad?' bad':warn?' warn':(front===2?' sel-big':' sel-small'));
+    }
+    g.appendChild(b);
+  });
+}
+
+function updateSVG() {
+  const fT = frontT[front], rT = rearT[rear-1];
+  const fR = front===2?32:20;
+  const rR = 8 + (8-rear)*5.5;
+  const col = front===2?'#e05c1a':'#1a7ae0';
+
+  document.getElementById('svg-fbig').style.opacity = front===2?'1':'0.2';
+  document.getElementById('svg-fsmall').style.opacity = front===1?'1':'0.2';
+  document.getElementById('svg-flabel').textContent = front===2?'Б':'М';
+  document.getElementById('svg-flabel').setAttribute('fill',col);
+
+  // rear cogs
+  let h='';
+  for(let i=1;i<=8;i++){
+    const rr=8+(8-i)*5.5, a=i===rear;
+    h+=`<circle cx="275" cy="45" r="${rr}" fill="none" stroke="${a?col:'#2a2a2a'}" stroke-width="${a?2.5:1}" opacity="${a?1:0.5}"/>`;
+  }
+  h+=`<text x="275" y="45" text-anchor="middle" dominant-baseline="central" font-family="Bebas Neue,sans-serif" font-size="12" fill="${col}">${rear}</text>`;
+  document.getElementById('svg-rear-cogs').innerHTML=h;
+
+  // chain
+  const fx=65,fy=45,rx=275,ry=45;
+  const dx=rx-fx,dy=ry-fy;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+  const sinA=(fR-rR)/dist, cosA=Math.sqrt(Math.max(0,1-sinA*sinA));
+  const topOff=Math.atan2(sinA,cosA);
+  const angle=Math.atan2(dy,dx);
+  const x1t=fx+fR*Math.cos(angle-Math.PI/2+topOff);
+  const y1t=fy+fR*Math.sin(angle-Math.PI/2+topOff);
+  const x2t=rx-rR*Math.cos(angle-Math.PI/2+topOff);
+  const y2t=ry-rR*Math.sin(angle-Math.PI/2+topOff);
+  const x1b=fx+fR*Math.cos(angle+Math.PI/2-topOff);
+  const y1b=fy+fR*Math.sin(angle+Math.PI/2-topOff);
+  const x2b=rx-rR*Math.cos(angle+Math.PI/2-topOff);
+  const y2b=ry-rR*Math.sin(angle+Math.PI/2-topOff);
+  const ct = document.getElementById('svg-chain-top');
+  const cb = document.getElementById('svg-chain-bot');
+  ct.setAttribute('x1',x1t);ct.setAttribute('y1',y1t);ct.setAttribute('x2',x2t);ct.setAttribute('y2',y2t);ct.setAttribute('stroke',col);
+  cb.setAttribute('x1',x1b);cb.setAttribute('y1',y1b);cb.setAttribute('x2',x2b);cb.setAttribute('y2',y2b);cb.setAttribute('stroke',col);
+}
+
+function render() {
+  buildRearGrid();
+  updateSVG();
+  const fT=frontT[front], rT=rearT[rear-1];
+  const ratio=(fT/rT).toFixed(2);
+  document.getElementById('rv-ratio').textContent=ratio+'×';
+  document.getElementById('rv-front').textContent=fT+'T';
+  document.getElementById('rv-rear').textContent=rT+'T';
+
+  const bad=(front===2&&rear>=7)||(front===1&&rear<=2);
+  const warn=(front===2&&rear>=6)||(front===1&&rear<=3);
+  const card=document.getElementById('status-card');
+  const icon=document.getElementById('status-icon');
+  const title=document.getElementById('status-title');
+  const body=document.getElementById('status-body');
+
+  card.className='status-card';
+  if(bad){
+    card.classList.add('bad');
+    icon.textContent='⛔';
+    title.style.color='#d03030';
+    title.textContent='Запрещённая комбинация';
+    body.textContent=(front===2&&rear>=7)
+      ?'Большая передняя + большая задняя — сильный перекос цепи. Замени на малую переднюю (1) + задние 4–6.'
+      :'Малая передняя + малая задняя — перекос в другую сторону. Замени на большую переднюю (2) + задние 3–5.';
+  } else if(warn){
+    card.classList.add('warn');
+    icon.textContent='⚠️';
+    title.style.color='#d4a020';
+    title.textContent='Допустимо, но нежелательно';
+    body.textContent='Небольшой перекос. Используй временно, старайся перейти в оптимальную зону.';
+  } else {
+    card.classList.add('ok');
+    icon.textContent='✅';
+    title.style.color='#1aaa5c';
+    const r=parseFloat(ratio);
+    title.textContent=r>3.2?'Максимальная скорость':r>2.5?'Крейсерская езда':r>2.0?'Умеренный темп':r>1.5?'Пологий подъём':'Крутой подъём / грунт';
+    body.textContent=r>3.2?'Ровный асфальт, спуск. Оптимально.':r>2.5?'Хороший темп на ровной дороге.':r>2.0?'Небольшие уклоны, встречный ветер.':r>1.5?'Подъёмы, неровный асфальт.':'Крутые горки и тяжёлый грунт.';
+  }
+}
+
+function setFront(f){
+  front=f;
+  document.getElementById('f1').className='star-btn'+(f===1?' sel-small':'');
+  document.getElementById('f2').className='star-btn'+(f===2?' sel-big':'');
+  if(f===2&&rear>=7) rear=5;
+  if(f===1&&rear<=2) rear=4;
+  render();
+}
+
+function toggleScenario(el){ el.classList.toggle('open'); }
+function toggleProblem(el){ el.classList.toggle('open'); }
+
+// init
+render();
+</script>
+</body>
+</html>

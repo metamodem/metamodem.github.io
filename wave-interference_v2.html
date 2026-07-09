@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>INTERFERENCE.SYS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #000;
+    --fg: #fff;
+    --line: rgba(255,255,255,0.28);
+    --line-strong: rgba(255,255,255,0.55);
+    --dim: rgba(255,255,255,0.45);
+  }
+  body.light{
+    --bg: #fff;
+    --fg: #000;
+    --line: rgba(0,0,0,0.28);
+    --line-strong: rgba(0,0,0,0.55);
+    --dim: rgba(0,0,0,0.45);
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; width:100%; height:100%;
+    background:var(--bg); overflow:hidden;
+    font-family:'Space Mono', 'Courier New', monospace;
+    color:var(--fg);
+    -webkit-font-smoothing:antialiased;
+    transition: background .25s ease, color .25s ease;
+  }
+  canvas{ display:block; position:fixed; inset:0; }
+
+  .hud{
+    position:fixed; inset:0; pointer-events:none;
+    z-index:10;
+  }
+  .corner{
+    position:absolute; width:22px; height:22px;
+    border:1px solid var(--line);
+  }
+  .corner.tl{ top:14px; left:14px; border-right:none; border-bottom:none; }
+  .corner.tr{ top:14px; right:14px; border-left:none; border-bottom:none; }
+  .corner.bl{ bottom:14px; left:14px; border-right:none; border-top:none; }
+  .corner.br{ bottom:14px; right:14px; border-left:none; border-top:none; }
+
+  .topbar{
+    position:absolute; top:20px; left:44px; right:44px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--dim);
+  }
+  .topbar .title{ color:var(--fg); font-weight:700; }
+  .topbar .title span{ color:var(--dim); font-weight:400; margin-left:8px; }
+  .rec{ display:flex; align-items:center; gap:6px; }
+  .rec .dot{
+    width:6px; height:6px; border-radius:50%; background:var(--fg);
+    animation: blink 1.4s infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.15;} }
+
+  .panel{
+    position:fixed; left:0; right:0; bottom:0;
+    padding:16px 20px 18px;
+    background:linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.55) 70%, transparent);
+    border-top:1px solid var(--line);
+    pointer-events:auto;
+    z-index:20;
+  }
+  .row{
+    display:flex; flex-wrap:wrap; align-items:center;
+    gap:10px; margin-bottom:10px;
+  }
+  .row:last-child{ margin-bottom:0; }
+
+  .modes{ display:flex; gap:6px; flex-wrap:wrap; }
+  .mode-btn{
+    background:transparent; color:var(--dim);
+    border:1px solid var(--line);
+    font-family:inherit; font-size:10px; letter-spacing:2px;
+    text-transform:uppercase; padding:7px 12px;
+    cursor:pointer; transition:all .15s ease;
+  }
+  .mode-btn:hover{ color:var(--fg); border-color:var(--line-strong); }
+  .mode-btn.active{ background:var(--fg); color:var(--bg); border-color:var(--fg); }
+
+  .ctrl{ display:flex; align-items:center; gap:8px; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); }
+  .ctrl input[type=range]{
+    -webkit-appearance:none; width:120px; height:1px; background:var(--line);
+    outline:none; cursor:pointer;
+  }
+  .ctrl input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:10px; height:10px; background:var(--fg); cursor:pointer;
+  }
+  .ctrl input[type=range]::-moz-range-thumb{
+    width:10px; height:10px; background:var(--fg); border:none; cursor:pointer;
+  }
+
+  .toggle{
+    border:1px solid var(--line); background:transparent; color:var(--dim);
+    font-family:inherit; font-size:10px; letter-spacing:2px; text-transform:uppercase;
+    padding:7px 12px; cursor:pointer;
+  }
+  .toggle.active{ background:var(--fg); color:var(--bg); border-color:var(--fg); }
+
+  .hint{
+    font-size:10px; letter-spacing:1px; color:var(--dim); text-transform:uppercase;
+    margin-left:auto; text-align:right;
+  }
+
+  .syscontrols{
+    position:absolute; top:52px; right:44px;
+    display:flex; align-items:center; gap:8px;
+    pointer-events:auto;
+  }
+  .sys-btn{
+    background:transparent; color:var(--dim);
+    border:1px solid var(--line);
+    font-family:inherit; font-size:10px; letter-spacing:1px;
+    text-transform:uppercase; padding:6px 10px;
+    cursor:pointer; transition:all .15s ease;
+  }
+  .sys-btn:hover{ color:var(--fg); border-color:var(--line-strong); }
+  .sys-btn.active{ background:var(--fg); color:var(--bg); border-color:var(--fg); }
+  .sys-btn:disabled{ opacity:0.3; cursor:default; }
+  .sys-btn:disabled:hover{ color:var(--dim); border-color:var(--line); }
+  .lang-group{ display:flex; gap:4px; }
+  .lang-group .sys-btn{ padding:6px 9px; }
+  .vol-group{ display:flex; align-items:center; gap:6px; }
+  #volBtn{ font-size:13px; padding:4px 9px; line-height:1; }
+  .vol-group input[type=range]{
+    -webkit-appearance:none; width:60px; height:1px; background:var(--line);
+    outline:none; cursor:pointer;
+  }
+  .vol-group input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:9px; height:9px; background:var(--fg); cursor:pointer;
+  }
+  .vol-group input[type=range]::-moz-range-thumb{
+    width:9px; height:9px; background:var(--fg); border:none; cursor:pointer;
+  }
+
+  .ui-fade{ transition:opacity .25s ease; }
+  .ui-fade.hidden{ opacity:0; pointer-events:none; }
+
+  @media (max-width:640px){
+    .syscontrols{ top:auto; bottom:110px; right:14px; }
+    .vol-group input[type=range]{ display:none; }
+    .hint{ display:none; }
+    .ctrl input[type=range]{ width:80px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hud">
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+  <div class="topbar ui-fade">
+    <div class="title">INTERFERENCE.SYS<span>v1.08</span></div>
+    <div class="rec"><span class="dot"></span> <span id="recLabel">PATTERN</span> <span id="modeLabel">01/07 — RIPPLE</span></div>
+  </div>
+  <div class="syscontrols">
+    <div class="lang-group ui-fade">
+      <button class="sys-btn" id="langRu">RU</button>
+      <button class="sys-btn" id="langEn">EN</button>
+    </div>
+    <div class="vol-group ui-fade">
+      <button class="sys-btn" id="volBtn" title="">🔈</button>
+      <input type="range" id="volSlider" min="0" max="100" value="60">
+    </div>
+    <button class="sys-btn ui-fade" id="themeBtn">LIGHT</button>
+    <button class="sys-btn" id="hideBtn">HIDE UI</button>
+  </div>
+</div>
+
+<div class="panel ui-fade">
+  <div class="row">
+    <div class="modes" id="modes"></div>
+    <div class="hint" id="hintText">click / drag — ripple &nbsp;·&nbsp; move — distort field</div>
+  </div>
+  <div class="row">
+    <div class="ctrl"><span id="lblSpeed">speed</span><input type="range" id="speed" min="10" max="300" value="90"></div>
+    <div class="ctrl"><span id="lblDensity">density</span><input type="range" id="density" min="4" max="40" value="16"></div>
+    <button class="toggle" id="auto">auto-cycle</button>
+  </div>
+</div>
+
+<audio id="bgAudio" loop preload="none"></audio>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ==================================================================
+// ФОНОВЫЙ ТРЕК: вставьте прямую ссылку на аудиофайл (mp3/ogg/wav) —
+// он будет проигрываться в цикле. Пусто = кнопка громкости неактивна.
+// BACKGROUND TRACK: paste a direct audio file URL (mp3/ogg/wav) below —
+// it will loop. Leave empty to keep the volume button disabled.
+// ==================================================================
+const TRACK_URL = "";
+
+const LANG = {
+  en: {
+    modes: ["RIPPLE","MOIRÉ","SPIRAL","RINGS","LINES","PLASMA","CHAOS"],
+    recLabel: "PATTERN",
+    hint: "click / drag — ripple &nbsp;·&nbsp; move — distort field",
+    speed: "speed",
+    density: "density",
+    auto: "auto-cycle",
+    hide: "HIDE UI",
+    show: "SHOW UI",
+    dark: "DARK",
+    light: "LIGHT",
+    noTrack: "no track set in page source"
+  },
+  ru: {
+    modes: ["РЯБЬ","МУАР","СПИРАЛЬ","КОЛЬЦА","ЛИНИИ","ПЛАЗМА","ХАОС"],
+    recLabel: "ПАТТЕРН",
+    hint: "клик / тап — рябь &nbsp;·&nbsp; движение — искажение поля",
+    speed: "скорость",
+    density: "плотность",
+    auto: "авто-смена",
+    hide: "СКРЫТЬ UI",
+    show: "ПОКАЗАТЬ UI",
+    dark: "ТЁМНАЯ",
+    light: "СВЕТЛАЯ",
+    noTrack: "трек не задан в коде страницы"
+  }
+};
+let currentLang = 'en';
+
+const MAX_SOURCES = 6;
+const SOURCE_LIFE = 3.5;
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+
+const sourcesArr = [];
+const agesArr = [];
+for(let i=0;i<MAX_SOURCES;i++){ sourcesArr.push(new THREE.Vector2(0,0)); agesArr.push(999.0); }
+
+const uniforms = {
+  uTime: { value: 0 },
+  uSpeed: { value: 0.9 },
+  uDensity: { value: 16.0 },
+  uMode: { value: 0.0 },
+  uInvert: { value: 0.0 },
+  uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+  uMouse: { value: new THREE.Vector2(0,0) },
+  uSources: { value: sourcesArr },
+  uSourceAge: { value: agesArr }
+};
+
+const vertexShader = `
+  varying vec2 vUv;
+  void main(){
+    vUv = position.xy * 0.5 + 0.5;
+    gl_Position = vec4(position, 1.0);
+  }
+`;
+
+const fragmentShader = `
+  precision highp float;
+  varying vec2 vUv;
+  uniform float uTime;
+  uniform float uSpeed;
+  uniform float uDensity;
+  uniform float uMode;
+  uniform float uInvert;
+  uniform vec2 uResolution;
+  uniform vec2 uMouse;
+  uniform vec2 uSources[${MAX_SOURCES}];
+  uniform float uSourceAge[${MAX_SOURCES}];
+
+  float ringWave(vec2 p, vec2 c, float t, float freq, float spd){
+    return sin(length(p - c) * freq - t * spd);
+  }
+
+  void main(){
+    float aspect = uResolution.x / uResolution.y;
+    vec2 p = (vUv - 0.5) * 2.0;
+    p.x *= aspect;
+
+    float t = uTime * uSpeed;
+    float freq = 5.0 + uDensity * 0.9;
+    int mode = int(uMode + 0.5);
+
+    float field = 0.0;
+
+    if(mode == 0){
+      vec2 c1 = 0.5 * vec2(cos(t*0.3), sin(t*0.3));
+      vec2 c2 = 0.6 * vec2(cos(t*0.3+2.094), sin(t*0.3+2.094));
+      vec2 c3 = 0.42* vec2(cos(-t*0.22+4.188), sin(-t*0.22+4.188));
+      field = ringWave(p,c1,t,freq,1.0) + ringWave(p,c2,t,freq*1.05,1.1) + ringWave(p,c3,t,freq*1.15,0.9);
+    } else if(mode == 1){
+      float a1 = t*0.12;
+      float a2 = -t*0.09;
+      float g1 = (p.x*cos(a1) - p.y*sin(a1)) * freq;
+      float g2 = (p.x*cos(a2) - p.y*sin(a2)) * freq * 1.04;
+      field = sin(g1) + sin(g2);
+    } else if(mode == 2){
+      float r = length(p);
+      float a = atan(p.y, p.x);
+      field = sin(a*8.0 + r*freq - t) + 0.4*sin(r*freq*0.5 - t*0.6);
+    } else if(mode == 3){
+      float r = length(p);
+      float a = atan(p.y, p.x);
+      field = sin(r*freq - t) + 0.35*sin(a*6.0 + t*0.5);
+    } else if(mode == 4){
+      // ЛИНИИ / LINES — geometrically straight interference lines,
+      // mirror-reflected like flux lines bouncing inside a cell
+      float cell = 1.6 + 0.35 * sin(t * 0.15);
+      float rot = t * 0.05;
+      vec2 pr = vec2(p.x*cos(rot) - p.y*sin(rot), p.x*sin(rot) + p.y*cos(rot));
+      vec2 pf = abs(mod(pr, cell) - cell * 0.5);
+      field = sin(pf.x * freq - t * 1.1)
+            + sin(pf.y * freq * 1.06 + t * 0.9)
+            + sin((pf.x + pf.y) * freq * 0.5 - t * 0.6)
+            + sin((pf.x - pf.y) * freq * 0.5 + t * 0.7);
+    } else if(mode == 5){
+      field = sin(p.x*freq*0.6 + t) + sin(p.y*freq*0.6 - t*1.3)
+            + sin((p.x+p.y)*freq*0.4 + t*0.8) + sin(length(p)*freq*0.35 - t*1.5);
+    } else {
+      vec2 c1 = 0.5 * vec2(cos(t*0.3), sin(t*0.3));
+      float r = length(p);
+      float a = atan(p.y, p.x);
+      field += ringWave(p,c1,t,freq,1.0);
+      field += sin((p.x*cos(t*0.1) - p.y*sin(t*0.1)) * freq * 0.8);
+      field += sin(a*6.0 + r*freq*0.7 - t);
+    }
+
+    field += 0.85 * ringWave(p, uMouse, t, freq*1.4, 1.3);
+
+    for(int i=0;i<${MAX_SOURCES};i++){
+      float age = uSourceAge[i];
+      if(age < ${SOURCE_LIFE.toFixed(1)}){
+        float amp = 1.0 - age / ${SOURCE_LIFE.toFixed(1)};
+        amp *= amp;
+        field += ringWave(p, uSources[i], uTime, freq*1.8, 2.4) * amp * 1.4;
+      }
+    }
+
+    float f2 = field * (0.6 + uDensity * 0.12);
+    float nearestInt = floor(f2 + 0.5);
+    float distToLine = abs(f2 - nearestInt);
+    float aa = fwidth(f2) + 0.0001;
+
+    float lineCore = 1.0 - smoothstep(0.0, aa*1.3, distToLine);
+    float halo = exp(-distToLine*6.0) * 0.3;
+    float intensity = clamp(lineCore + halo, 0.0, 1.0);
+
+    float scan = 0.94 + 0.06*sin(vUv.y * uResolution.y * 3.14159265);
+    intensity *= scan;
+
+    float vig = 1.0 - smoothstep(0.85, 1.6, length(p)/max(aspect,1.0));
+    intensity *= mix(0.75, 1.0, vig);
+
+    intensity = mix(intensity, 1.0 - intensity, uInvert);
+
+    gl_FragColor = vec4(vec3(intensity), 1.0);
+  }
+`;
+
+const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader });
+const geometry = new THREE.PlaneGeometry(2,2);
+const mesh = new THREE.Mesh(geometry, material);
+scene.add(mesh);
+
+// ---- mouse / touch -> shader space ----
+function toFieldSpace(clientX, clientY){
+  const w = window.innerWidth, h = window.innerHeight;
+  const aspect = w/h;
+  const x = ((clientX / w) - 0.5) * 2 * aspect;
+  const y = -((clientY / h) - 0.5) * 2;
+  return new THREE.Vector2(x,y);
+}
+
+let sourceSlot = 0;
+const birthTimes = new Array(MAX_SOURCES).fill(-9999);
+function addSource(clientX, clientY){
+  const p = toFieldSpace(clientX, clientY);
+  sourcesArr[sourceSlot].copy(p);
+  birthTimes[sourceSlot] = performance.now();
+  sourceSlot = (sourceSlot + 1) % MAX_SOURCES;
+}
+
+window.addEventListener('pointermove', (e)=>{
+  const p = toFieldSpace(e.clientX, e.clientY);
+  uniforms.uMouse.value.copy(p);
+});
+window.addEventListener('pointerdown', (e)=>{
+  addSource(e.clientX, e.clientY);
+});
+window.addEventListener('touchstart', (e)=>{
+  if(e.touches[0]) addSource(e.touches[0].clientX, e.touches[0].clientY);
+}, {passive:true});
+
+window.addEventListener('resize', ()=>{
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+});
+
+// ---- UI ----
+const modesEl = document.getElementById('modes');
+const modeLabel = document.getElementById('modeLabel');
+const recLabelEl = document.getElementById('recLabel');
+const hintEl = document.getElementById('hintText');
+const lblSpeedEl = document.getElementById('lblSpeed');
+const lblDensityEl = document.getElementById('lblDensity');
+const autoBtn = document.getElementById('auto');
+let currentMode = 0;
+
+function setMode(i){
+  currentMode = i;
+  uniforms.uMode.value = i;
+  [...modesEl.children].forEach((b,idx)=> b.classList.toggle('active', idx===i));
+  const total = LANG[currentLang].modes.length;
+  modeLabel.textContent = String(i+1).padStart(2,'0') + '/' + String(total).padStart(2,'0') + ' — ' + LANG[currentLang].modes[i];
+}
+
+LANG[currentLang].modes.forEach((name, i)=>{
+  const btn = document.createElement('button');
+  btn.className = 'mode-btn';
+  btn.textContent = name;
+  btn.addEventListener('click', ()=> setMode(i));
+  modesEl.appendChild(btn);
+});
+setMode(0);
+
+document.getElementById('speed').addEventListener('input', (e)=>{
+  uniforms.uSpeed.value = e.target.value / 100;
+});
+document.getElementById('density').addEventListener('input', (e)=>{
+  uniforms.uDensity.value = parseFloat(e.target.value);
+});
+
+let autoCycle = false;
+autoBtn.addEventListener('click', ()=>{
+  autoCycle = !autoCycle;
+  autoBtn.classList.toggle('active', autoCycle);
+});
+
+// ---- localization ----
+function applyLang(lang){
+  currentLang = lang;
+  document.getElementById('langRu').classList.toggle('active', lang === 'ru');
+  document.getElementById('langEn').classList.toggle('active', lang === 'en');
+
+  [...modesEl.children].forEach((b, idx) => { b.textContent = LANG[lang].modes[idx]; });
+  const total = LANG[lang].modes.length;
+  modeLabel.textContent = String(currentMode+1).padStart(2,'0') + '/' + String(total).padStart(2,'0') + ' — ' + LANG[lang].modes[currentMode];
+  recLabelEl.textContent = LANG[lang].recLabel;
+  hintEl.innerHTML = LANG[lang].hint;
+  lblSpeedEl.textContent = LANG[lang].speed;
+  lblDensityEl.textContent = LANG[lang].density;
+  autoBtn.textContent = LANG[lang].auto;
+  hideBtn.textContent = uiHidden ? LANG[lang].show : LANG[lang].hide;
+  themeBtn.textContent = isLight ? LANG[lang].dark : LANG[lang].light;
+  volBtn.title = TRACK_URL ? '' : LANG[lang].noTrack;
+}
+
+document.getElementById('langRu').addEventListener('click', ()=> applyLang('ru'));
+document.getElementById('langEn').addEventListener('click', ()=> applyLang('en'));
+
+// ---- background track ----
+const bgAudio = document.getElementById('bgAudio');
+const volBtn = document.getElementById('volBtn');
+const volSlider = document.getElementById('volSlider');
+let audioOn = false;
+
+if (TRACK_URL) {
+  bgAudio.src = TRACK_URL;
+} else {
+  volBtn.disabled = true;
+}
+bgAudio.loop = true;
+bgAudio.volume = parseInt(volSlider.value, 10) / 100;
+
+function updateVolIcon(){
+  volBtn.textContent = audioOn ? '🔊' : '🔈';
+  volBtn.classList.toggle('active', audioOn);
+}
+updateVolIcon();
+
+volBtn.addEventListener('click', ()=>{
+  if (!TRACK_URL) return;
+  audioOn = !audioOn;
+  if (audioOn) { bgAudio.play().catch(()=>{ audioOn = false; updateVolIcon(); }); }
+  else { bgAudio.pause(); }
+  updateVolIcon();
+});
+volSlider.addEventListener('input', (e)=>{
+  bgAudio.volume = parseInt(e.target.value, 10) / 100;
+});
+
+// ---- theme: dark / light ----
+const themeBtn = document.getElementById('themeBtn');
+let isLight = false;
+
+function setTheme(light){
+  isLight = light;
+  document.body.classList.toggle('light', light);
+  uniforms.uInvert.value = light ? 1.0 : 0.0;
+  themeBtn.textContent = isLight ? LANG[currentLang].dark : LANG[currentLang].light;
+}
+setTheme(false);
+themeBtn.addEventListener('click', ()=> setTheme(!isLight));
+
+// ---- show / hide interface (everything fades except the show/hide button) ----
+const hideBtn = document.getElementById('hideBtn');
+const hideableEls = [
+  document.querySelector('.topbar'),
+  document.querySelector('.panel'),
+  document.querySelector('.lang-group'),
+  document.querySelector('.vol-group'),
+  themeBtn
+];
+let uiHidden = false;
+
+function setUiHidden(v){
+  uiHidden = v;
+  hideableEls.forEach(el => el.classList.toggle('hidden', v));
+  hideBtn.textContent = v ? LANG[currentLang].show : LANG[currentLang].hide;
+}
+
+hideBtn.addEventListener('click', ()=> setUiHidden(!uiHidden));
+window.addEventListener('keydown', (e)=>{
+  if (e.key.toLowerCase() === 'h') setUiHidden(!uiHidden);
+});
+
+applyLang('en');
+
+// ---- animate ----
+const clock = new THREE.Clock();
+let autoTimer = 0;
+
+function animate(){
+  const dt = clock.getDelta();
+  uniforms.uTime.value += dt;
+
+  for(let i=0;i<MAX_SOURCES;i++){
+    agesArr[i] = (performance.now() - birthTimes[i]) / 1000;
+  }
+
+  if(autoCycle){
+    autoTimer += dt;
+    if(autoTimer > 8){
+      autoTimer = 0;
+      setMode((currentMode + 1) % LANG[currentLang].modes.length);
+    }
+  }
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
